@@ -1,3 +1,3 @@
 const inquirer = require("inquirer");
-const mysql = require("mysql");
+const connection = require("./config/connection");
 const consoleTable = require('console.table');
