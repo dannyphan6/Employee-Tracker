@@ -102,22 +102,22 @@ function addEmployee() {
         {
             type: "input",
             name: "firstName",
-            message: "Please enter your first name."
+            message: "Please enter employee's first name."
         },
         {
             type: "input",
             name: "lastName",
-            message: "Please enter your last name."
+            message: "Please enter employee's last name."
         },
         {
             type: "input",
             name: "roleId",
-            message: "Please enter your role ID."
+            message: "Please enter employee's role ID."
         },
         {
             type: "input",
             name: "managerId",
-            message: "Please enter your Manager ID.",
+            message: "Please enter employee's Manager ID.",
             default: "Null"
         }
     ]).then((response) => {
@@ -138,7 +138,16 @@ function addEmployee() {
 }
 
 function removeEmployee() {
-
+    connection.query("DELETE FROM employees WHERE id = ?")
+    
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "removeEmployee",
+            message: "Please select the employee you would like to remove.",
+            choices: allEmployees
+        }
+    ])
 }
 
 function addDepartment() {
@@ -170,17 +179,17 @@ function addRole() {
         {
             type: "input",
             name: "title",
-            message: "Please enter your role title."
+            message: "Please enter employee's role title."
         },
         {
             type: "input",
             name: "salary",
-            message: "Please enter your salary."
+            message: "Please enter employee's salary."
         },
         {
             type: "input",
             name: "departmentId",
-            message: "Please enter your department ID."
+            message: "Please enter employee's department ID."
         }
     ]).then((response) => {
         connection.query("INSERT INTO roles SET ?", {
@@ -205,7 +214,7 @@ function updateEmployeeRole() {
         {
             type: "input",
             name: "employeeId",
-            message: "Please enter your Employee ID."
+            message: "Please enter employee's ID."
         },
         {
             type: "input",
