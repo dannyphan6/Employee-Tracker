@@ -70,6 +70,7 @@ function startApp() {
 };
 
 function viewAllEmployees() {
+    // Views employees from 'employees' table
     connection.query("SELECT * FROM employees", (err, response) => {
         console.table(response)
         startApp();
@@ -77,6 +78,7 @@ function viewAllEmployees() {
 }
 
 function viewAllDepartments() {
+    // Views departments from 'departments' table
     connection.query("SELECT * FROM departments", (err, response) => {
         console.table(response)
         startApp();
@@ -88,6 +90,7 @@ function viewEmployeeManager() {
 }
 
 function viewAllRoles() {
+    // Views roles from 'roles' table
     connection.query("SELECT * FROM roles", (err, response) => {
         console.table(response)
         startApp();
@@ -118,7 +121,10 @@ function addEmployee() {
             default: "Null"
         }
     ]).then((response) => {
+        // Inserts values into 'employees' table
         connection.query("INSERT INTO employees SET ?", {
+
+            // Inserts values into 'employees' table and their respective columns
             first_name: response.firstName,
             last_name: response.lastName,
             role_id: response.roleId,
@@ -144,6 +150,8 @@ function addDepartment() {
         }
     ]).then((response) => {
         connection.query("INSERT INTO departments SET ?", {
+
+            // Inserts values into 'department' table and their respective columns
             department_name: response.departmentName
         }, err => {
             if (err) throw err;
@@ -176,6 +184,7 @@ function addRole() {
         }
     ]).then((response) => {
         connection.query("INSERT INTO roles SET ?", {
+            // Inserts values into 'roles' table and their respective columns
             title: response.title,
             salary: response.salary,
             department_id: response.departmentId,
@@ -205,6 +214,7 @@ function updateEmployeeRole() {
         }
     ]).then((response) => {
         connection.query("UPDATE employees SET role_id = ? WHERE id = ?", 
+        // 'id' correlates with the specific employee in the table, and then updates their role_id
         [response.newId, response.employeeId],
         err => {
             if (err) throw err;
