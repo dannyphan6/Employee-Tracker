@@ -138,15 +138,17 @@ function addEmployee() {
 }
 
 function removeEmployee() {
+    // Shows all employees for the user to choose from
     connection.query("SELECT * FROM employees", (err, res) => {
-        console.log(res)
+        // console.log(res)
 
+        // Creates an array that breaks down the object and grabs the values of id, first_name, and last_name
         const allEmployees = res.map(({ id, first_name, last_name }) => ({
             name: `${first_name} ${last_name}`,
             value: id
-        }))
+        }));
 
-        console.log(allEmployees)
+        // console.log(allEmployees)
         inquirer.prompt([
             {
                 type: "list",
@@ -155,14 +157,14 @@ function removeEmployee() {
                 choices: allEmployees
             }
         ]).then((answer) => {
-            console.log(answer.removeEmployee)
-        })
-    })
-    
-    let employeeId = 1
-    connection.query("DELETE FROM employees WHERE id = ?", employeeId)
-    
-}
+            // console.log(answer.removeEmployee)
+
+            // answer.removeEmployee is plugged into the id, which allows for deletion of an employee from the table 'employees'
+            connection.query("DELETE FROM employees WHERE id = ?", answer.removeEmployee)
+            startApp();
+        });
+    });
+};
 
 function addDepartment() {
     inquirer.prompt([
