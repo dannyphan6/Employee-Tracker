@@ -161,6 +161,7 @@ function removeEmployee() {
 
             // answer.removeEmployee is plugged into the id, which allows for deletion of an employee from the table 'employees'
             connection.query("DELETE FROM employees WHERE id = ?", answer.removeEmployee)
+            console.log("Employee has been removed successfully!")
             startApp();
         });
     });
@@ -187,7 +188,28 @@ function addDepartment() {
 }
 
 function removeDepartment() {
+    connection.query("SELECT * FROM departments", (err, res) => {
+        // console.log(res)
 
+        const allDepartments = res.map(({ id, department_name}) => ({
+            name: `${department_name}`,
+            value: id
+        }));
+
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "removeDepartment",
+                message: "Please select the department you would like to remove.",
+                choices: allDepartments
+            }
+        ]).then((answer) => {
+            // console.log(answer.removeDepartment)
+            connection.query("DELETE FROM departments where id = ?", answer.removeDepartment)
+            console.log("Department has been removed successfully!")
+            startApp();
+        })
+    })
 }
 
 function addRole() {
