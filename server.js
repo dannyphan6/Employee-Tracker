@@ -22,7 +22,7 @@ function startApp() {
             type: "list",
             name: "choices",
             message: "What would you like to do?",
-            choices: ["View All Employees", "View All Departments", "View All Employees by Manager", "View All Roles", "Add Employee", "Remove Employee", "Add Department", "Remove Department", "Add Role", "Remove Role", "Update Employee Role", "Update Employee Manager", "Done"]
+            choices: ["View All Employees", "View All Departments", "View All Roles", "View All Employees by Manager", "Add Employee", "Remove Employee", "Add Department", "Remove Department", "Add Role", "Remove Role", "Update Employee Role", "Update Employee Manager", "Done"]
         }
     ]).then((response) => {
         switch(response.choices) {
@@ -32,11 +32,11 @@ function startApp() {
             case "View All Departments":
                 viewAllDepartments();
                 break;
-            case "View All Employees by Manager":
-                viewEmployeeManager();
-                break;
             case "View All Roles":
                 viewAllRoles();
+                break;
+            case "View All Employees by Manager":
+                viewEmployeeManager();
                 break;
             case "Add Employee":
                 addEmployee();
@@ -244,7 +244,27 @@ function addRole() {
 }
 
 function removeRole() {
+    connection.query("SELECT * FROM roles", (err, res) => {
+        console.log(res)
 
+        const allRoles = res.map(({ id, title }) => ({
+            name: `${title}`,
+            value: id
+        }));
+
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "removeRole",
+                message: "Please select the role you would like to remove.",
+                choices: allRoles
+            }
+        ]).then((answer) => {
+            connection.query("DELETE FROM * roles WHERE id = ?", answer.removeRole)
+            console.log("Role has been removed successfully!")
+            startApp();
+        })
+    })
 }
 
 function updateEmployeeRole() {
