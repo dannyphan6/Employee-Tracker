@@ -141,23 +141,27 @@ function removeEmployee() {
     connection.query("SELECT * FROM employees", (err, res) => {
         console.log(res)
 
-        const allEmployees = res.map(({ id, first_name, last_name }) => () {
+        const allEmployees = res.map(({ id, first_name, last_name }) => ({
             name: `${first_name} ${last_name}`,
             value: id
+        }))
+
+        console.log(allEmployees)
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "removeEmployee",
+                message: "Please select the employee you would like to remove.",
+                choices: allEmployees
+            }
+        ]).then((answer) => {
+            console.log(answer.removeEmployee)
         })
     })
     
     let employeeId = 1
     connection.query("DELETE FROM employees WHERE id = ?", employeeId)
     
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "removeEmployee",
-            message: "Please select the employee you would like to remove.",
-            choices: "SELECT * FROM employees"
-        }
-    ])
 }
 
 function addDepartment() {
