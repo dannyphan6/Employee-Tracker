@@ -86,7 +86,28 @@ function viewAllDepartments() {
 }
 
 function viewEmployeeManager() {
+    connection.query("SELECT * FROM employees", (err, res) => {
+        console.log(res)
 
+        const employeeManager = res.map(({ id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
+            value: id
+        }))
+
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "viewEmployeeManager",
+                message: "Please enter the employee by Manager who you would like to view",
+                choices: employeeManager
+            }
+        ]).then((answer) => {
+            connection.query("SELECT * FROM employees WHERE id = ?", [answer.viewEmployeeManager.id], (err, res) => {
+                console.log(res)
+            })
+        })
+
+    })
 }
 
 function viewAllRoles() {
@@ -260,7 +281,7 @@ function removeRole() {
                 choices: allRoles
             }
         ]).then((answer) => {
-            connection.query("DELETE FROM * roles WHERE id = ?", answer.removeRole)
+            connection.query("DELETE FROM roles WHERE id = ?", answer.removeRole)
             console.log("Role has been removed successfully!")
             startApp();
         })
