@@ -89,24 +89,24 @@ function viewEmployeeManager() {
     connection.query("SELECT * FROM employees", (err, res) => {
         console.log(res)
 
-        const employeeManager = res.map(({ id, first_name, last_name }) => ({
+        const employeeManager = res.map(({ first_name, last_name, manager_id }) => ({
             name: `${first_name} ${last_name}`,
-            value: id
+            value: manager_id
         }))
 
         inquirer.prompt([
             {
                 type: "list",
                 name: "viewEmployeeManager",
-                message: "Please enter the employee by Manager who you would like to view",
+                message: "Please select the manager who's employees you would like to view.",
                 choices: employeeManager
             }
         ]).then((answer) => {
-            connection.query("SELECT * FROM employees WHERE id = ?", [answer.viewEmployeeManager.id], (err, res) => {
+            connection.query("SELECT * FROM employees WHERE manager_id = ?", answer.viewEmployeeManager, (err, res) => {
                 console.log(res)
+                console.log(answer.viewEmployeeManager)
             })
         })
-
     })
 }
 
