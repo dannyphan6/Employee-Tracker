@@ -86,12 +86,13 @@ function viewAllDepartments() {
 }
 
 function viewEmployeeManager() {
-    connection.query("SELECT * FROM employees", (err, res) => {
-        console.log(res)
+    // Employees with manager_id = 0 means that they are a manager
+    connection.query("SELECT * FROM employees WHERE manager_id = 0", (err, res) => {
+        // console.log(res)
 
-        const employeeManager = res.map(({ first_name, last_name, manager_id }) => ({
+        const employeeManager = res.map(({ id, first_name, last_name }) => ({
             name: `${first_name} ${last_name}`,
-            value: manager_id
+            value: id
         }))
 
         inquirer.prompt([
@@ -103,8 +104,9 @@ function viewEmployeeManager() {
             }
         ]).then((answer) => {
             connection.query("SELECT * FROM employees WHERE manager_id = ?", answer.viewEmployeeManager, (err, res) => {
-                console.log(res)
-                console.log(answer.viewEmployeeManager)
+                console.table(res)
+                console.log("You've successfully viewed employees by manager!")
+                startApp();
             })
         })
     })
@@ -139,6 +141,7 @@ function addEmployee() {
             type: "input",
             name: "managerId",
             message: "Please enter employee's Manager ID.",
+            // If 0 is selected, this means that the employee is a manager
             default: "Null"
         }
     ]).then((response) => {
@@ -313,5 +316,25 @@ function updateEmployeeRole() {
 }
 
 function updateEmployeeManager() {
-    
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "employeeId",
+            message: "Please enter employee's ID."
+        },
+        {
+            type: "input",
+            name: "newId",
+            message: "Please enter the new manager ID."
+        }
+    ]).then((response) => {
+        connection.query("UPDATE employees SET manager_id = ? WHERE id = ?", 
+        // 'id' correlates with the specific employee in the table, and then updates their role_id
+        [response.newId, response.employeeId],
+        err => {
+            if (err) throw err;
+            console.log("Manager ID has been updated!")
+            startApp();
+        }) 
+    })
 }
