@@ -142,7 +142,7 @@ function addEmployee() {
             name: "managerId",
             message: "Please enter employee's Manager ID.",
             // If 0 is selected, this means that the employee is a manager
-            default: "Null"
+            default: "0"
         }
     ]).then((response) => {
         // Inserts values into 'employees' table
