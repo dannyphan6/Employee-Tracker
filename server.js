@@ -8,9 +8,9 @@ const connection = mysql.createConnection({
     user: "root",
     password: "Sassygirl3991",
     database: "employee_trackerdb"
-  });
+});
 
-connection.connect(function(err) {
+connection.connect(function (err) {
     if (err) throw err;
     console.log(`App listening on PORT ${connection.threadId}`)
     startApp();
@@ -25,7 +25,7 @@ function startApp() {
             choices: ["View All Employees", "View All Departments", "View All Roles", "View All Employees by Manager", "Add Employee", "Remove Employee", "Add Department", "Remove Department", "Add Role", "Remove Role", "Update Employee Role", "Update Employee Manager", "Done"]
         }
     ]).then((response) => {
-        switch(response.choices) {
+        switch (response.choices) {
             case "View All Employees":
                 viewAllEmployees();
                 break;
@@ -71,7 +71,7 @@ function startApp() {
 
 function viewAllEmployees() {
     // Views employees from 'employees' table
-    connection.query("SELECT * FROM employees", (err, response) => {
+    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department_name AS departments, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employees LEFT JOIN roles on roles.id = employees.role_id LEFT JOIN departments ON departments.id = roles.department_id LEFT JOIN employees manager ON manager.id = employees.manager_id;", (err, response) => {
         console.table(response)
         startApp();
     })
@@ -86,8 +86,7 @@ function viewAllDepartments() {
 }
 
 function viewEmployeeManager() {
-    // Employees with manager_id = 0 means that they are a manager
-    connection.query("SELECT * FROM employees WHERE manager_id = 0", (err, res) => {
+    connection.query("SELECT * FROM employees WHERE manager_id IS null", (err, res) => {
         // console.log(res)
 
         const employeeManager = res.map(({ id, first_name, last_name }) => ({
@@ -103,7 +102,7 @@ function viewEmployeeManager() {
                 choices: employeeManager
             }
         ]).then((answer) => {
-            connection.query("SELECT * FROM employees WHERE manager_id = 0", answer.viewEmployeeManager, (err, res) => {
+            connection.query("SELECT * FROM employees WHERE manager_id = ?", answer.viewEmployeeManager, (err, res) => {
                 console.table(res)
                 console.log("You've successfully viewed employees by manager!")
                 startApp();
@@ -121,43 +120,55 @@ function viewAllRoles() {
 }
 
 function addEmployee() {
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "firstName",
-            message: "Please enter employee's first name."
-        },
-        {
-            type: "input",
-            name: "lastName",
-            message: "Please enter employee's last name."
-        },
-        {
-            type: "input",
-            name: "roleId",
-            message: "Please enter employee's role ID."
-        },
-        {
-            type: "input",
-            name: "managerId",
-            message: "Please enter employee's Manager ID.",
-            // If 0 is selected, this means that the employee is a manager
-            // default: "Null"
-        }
-    ]).then((response) => {
-        // Inserts values into 'employees' table
-        connection.query("INSERT INTO employees SET ?", {
+    connection.query("SELECT * FROM employees WHERE manager_id IS null", (err, res) => {
+        // console.log(res)
 
-            // Inserts values into 'employees' table and their respective columns
-            first_name: response.firstName,
-            last_name: response.lastName,
-            role_id: response.roleId,
-            manager_id: response.managerId
-        }, err => {
-            if (err) throw err;
-            console.log("Employee was added successfully!")
-            startApp();
-        }) 
+        // Loops through the query to grab all the employees who have an id of null, which states that they're a manager
+        const employeeManager = res.map(({ id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
+            value: id
+        }))
+
+        // unshift adds a value to the beginning of the array
+        employeeManager.unshift({ name: "None", value: null })
+
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "firstName",
+                message: "Please enter employee's first name."
+            },
+            {
+                type: "input",
+                name: "lastName",
+                message: "Please enter employee's last name."
+            },
+            {
+                type: "input",
+                name: "roleId",
+                message: "Please enter employee's role ID."
+            },
+            {
+                type: "list",
+                name: "managerId",
+                message: "Please select the Manager for this employee.",
+                choices: employeeManager
+            }
+        ]).then((response) => {
+            // Inserts values into 'employees' table
+            connection.query("INSERT INTO employees SET ?", {
+
+                // Inserts values into 'employees' table and their respective columns
+                first_name: response.firstName,
+                last_name: response.lastName,
+                role_id: response.roleId,
+                manager_id: response.managerId
+            }, err => {
+                if (err) throw err;
+                console.log("Employee was added successfully!")
+                startApp();
+            })
+        })
     })
 }
 
@@ -207,7 +218,7 @@ function addDepartment() {
             if (err) throw err;
             console.log("Department was added successfully!")
             startApp();
-        }) 
+        })
     })
 }
 
@@ -215,7 +226,7 @@ function removeDepartment() {
     connection.query("SELECT * FROM departments", (err, res) => {
         // console.log(res)
 
-        const allDepartments = res.map(({ id, department_name}) => ({
+        const allDepartments = res.map(({ id, department_name }) => ({
             name: `${department_name}`,
             value: id
         }));
@@ -263,7 +274,7 @@ function addRole() {
             if (err) throw err;
             console.log("Role was added successfully!")
             startApp();
-        }) 
+        })
     })
 }
 
@@ -304,14 +315,14 @@ function updateEmployeeRole() {
             message: "Please enter the new role ID for the employee."
         }
     ]).then((response) => {
-        connection.query("UPDATE employees SET role_id = ? WHERE id = ?", 
-        // 'id' correlates with the specific employee in the table, and then updates their role_id
-        [response.newId, response.employeeId],
-        err => {
-            if (err) throw err;
-            console.log("Employee Role has been updated!")
-            startApp();
-        }) 
+        connection.query("UPDATE employees SET role_id = ? WHERE id = ?",
+            // 'id' correlates with the specific employee in the table, and then updates their role_id
+            [response.newId, response.employeeId],
+            err => {
+                if (err) throw err;
+                console.log("Employee Role has been updated!")
+                startApp();
+            })
     })
 }
 
@@ -328,13 +339,13 @@ function updateEmployeeManager() {
             message: "Please enter the new manager ID."
         }
     ]).then((response) => {
-        connection.query("UPDATE employees SET manager_id = ? WHERE id = ?", 
-        // 'id' correlates with the specific employee in the table, and then updates their role_id
-        [response.newId, response.employeeId],
-        err => {
-            if (err) throw err;
-            console.log("Manager ID has been updated!")
-            startApp();
-        }) 
+        connection.query("UPDATE employees SET manager_id = ? WHERE id = ?",
+            // 'id' correlates with the specific employee in the table, and then updates their role_id
+            [response.newId, response.employeeId],
+            err => {
+                if (err) throw err;
+                console.log("Manager ID has been updated!")
+                startApp();
+            })
     })
 }
