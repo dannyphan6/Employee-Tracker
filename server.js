@@ -103,7 +103,7 @@ function viewEmployeeManager() {
                 choices: employeeManager
             }
         ]).then((answer) => {
-            connection.query("SELECT * FROM employees WHERE manager_id = ?", answer.viewEmployeeManager, (err, res) => {
+            connection.query("SELECT * FROM employees WHERE manager_id = 0", answer.viewEmployeeManager, (err, res) => {
                 console.table(res)
                 console.log("You've successfully viewed employees by manager!")
                 startApp();
@@ -142,7 +142,7 @@ function addEmployee() {
             name: "managerId",
             message: "Please enter employee's Manager ID.",
             // If 0 is selected, this means that the employee is a manager
-            default: "Null"
+            default: "0"
         }
     ]).then((response) => {
         // Inserts values into 'employees' table
