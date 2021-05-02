@@ -70,7 +70,7 @@ function startApp() {
 };
 
 function viewAllEmployees() {
-    // Views employees from 'employees' table
+    // Selects all rows up to FROM where employees is joined with roles (IF roles.id and employee.role_id match then grab all data from 'SELECT')
     connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department_name AS departments, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employees LEFT JOIN roles on roles.id = employees.role_id LEFT JOIN departments ON departments.id = roles.department_id LEFT JOIN employees manager ON manager.id = employees.manager_id;", (err, response) => {
         console.table(response)
         startApp();
@@ -86,6 +86,7 @@ function viewAllDepartments() {
 }
 
 function viewEmployeeManager() {
+    // If manager_id is null, then that means the employee is a manager
     connection.query("SELECT * FROM employees WHERE manager_id IS null", (err, res) => {
         // console.log(res)
 
@@ -102,6 +103,7 @@ function viewEmployeeManager() {
                 choices: employeeManager
             }
         ]).then((answer) => {
+            // Views employees where the manager_id matches with the user choice that is selected
             connection.query("SELECT * FROM employees WHERE manager_id = ?", answer.viewEmployeeManager, (err, res) => {
                 console.table(res)
                 console.log("You've successfully viewed employees by manager!")
@@ -120,10 +122,11 @@ function viewAllRoles() {
 }
 
 function addEmployee() {
+    // If manager_id is null, then that means the employee is a manager
     connection.query("SELECT * FROM employees WHERE manager_id IS null", (err, res) => {
         // console.log(res)
 
-        // Loops through the query to grab all the employees who have an id of null, which states that they're a manager
+        // Loops through the query to grab all the employees who have an manager_id of null, which states that they're a manager
         const employeeManager = res.map(({ id, first_name, last_name }) => ({
             name: `${first_name} ${last_name}`,
             value: id
