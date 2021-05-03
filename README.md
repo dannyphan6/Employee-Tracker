@@ -10,7 +10,7 @@
 * [Questions](#questions)
 
 ## Project Description
-Employee Tracker is a command-line application that allows companies to manage their employees. This application utilizes node, inquirer, and MySQL. Business owners will be able to oversee and manage their company's employees. Furthermore, they will have the ability to add, remove, and view departments, roles, and employees. Along with, updating employee roles, employee managers, and viewing employees by manager. This is a great way for business owners to stay organized and lay out future plans and goals. 
+Employee Tracker is a command-line application that allows business owners to oversee and manage their employees. They will have the ability to add, remove, and view departments, roles, and employees. Along with, updating employee roles, employee managers, and viewing employees by manager. This is a great way for business owners to stay organized and lay out future plans and goals. This application utilizes Node, Inquirer, and MySQL.
 
 Below is an example of the application's appearance:
 
