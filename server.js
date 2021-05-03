@@ -65,8 +65,8 @@ function startApp() {
             case "Done":
                 connection.end();
                 break;
-        }
-    })
+        };
+    });
 };
 
 function addDepartment() {
@@ -85,9 +85,9 @@ function addDepartment() {
             if (err) throw err;
             console.log("Department was added successfully!")
             startApp();
-        })
-    })
-}
+        });
+    });
+};
 
 function removeDepartment() {
     connection.query("SELECT * FROM departments", (err, res) => {
@@ -110,17 +110,17 @@ function removeDepartment() {
             connection.query("DELETE FROM departments where id = ?", answer.removeDepartment)
             console.log("Department has been removed successfully!")
             startApp();
-        })
-    })
-}
+        });
+    });
+};
 
 function viewAllDepartments() {
     // Views departments from 'departments' table
     connection.query("SELECT * FROM departments", (err, response) => {
         console.table(response)
         startApp();
-    })
-}
+    });
+};
 
 function addRole() {
     inquirer.prompt([
@@ -149,13 +149,13 @@ function addRole() {
             if (err) throw err;
             console.log("Role was added successfully!")
             startApp();
-        })
-    })
-}
+        });
+    });
+};
 
 function removeRole() {
     connection.query("SELECT * FROM roles", (err, res) => {
-        console.log(res)
+        // console.log(res);
 
         const allRoles = res.map(({ id, title }) => ({
             name: `${title}`,
@@ -173,9 +173,9 @@ function removeRole() {
             connection.query("DELETE FROM roles WHERE id = ?", answer.removeRole)
             console.log("Role has been removed successfully!")
             startApp();
-        })
-    })
-}
+        });
+    });
+};
 
 function updateEmployeeRole() {
     inquirer.prompt([
@@ -191,23 +191,23 @@ function updateEmployeeRole() {
         }
     ]).then((response) => {
         connection.query("UPDATE employees SET role_id = ? WHERE id = ?",
-            // 'id' correlates with the specific employee in the table, and then updates their role_id
-            [response.newId, response.employeeId],
-            err => {
-                if (err) throw err;
-                console.log("Employee Role has been updated!")
-                startApp();
-            })
-    })
-}
+        // 'id' correlates with the specific employee in the table, and then updates their role_id
+        [response.newId, response.employeeId],
+        err => {
+            if (err) throw err;
+            console.log("Employee Role has been updated!")
+            startApp();
+        });
+    });
+};
 
 function viewAllRoles() {
     // Views roles from 'roles' table
     connection.query("SELECT * FROM roles", (err, response) => {
         console.table(response)
         startApp();
-    })
-}
+    });
+};
 
 function addEmployee() {
     // If manager_id is null, then that means the employee is a manager
@@ -218,10 +218,10 @@ function addEmployee() {
         const employeeManager = res.map(({ id, first_name, last_name }) => ({
             name: `${first_name} ${last_name}`,
             value: id
-        }))
+        }));
 
         // unshift adds a value to the beginning of the array
-        employeeManager.unshift({ name: "None", value: null })
+        employeeManager.unshift({ name: "None", value: null });
 
         inquirer.prompt([
             {
@@ -258,10 +258,10 @@ function addEmployee() {
                 if (err) throw err;
                 console.log("Employee was added successfully!")
                 startApp();
-            })
-        })
-    })
-}
+            });
+        });
+    });
+};
 
 function removeEmployee() {
     // Shows all employees for the user to choose from
@@ -307,34 +307,33 @@ function updateEmployeeManager() {
         }
     ]).then((response) => {
         connection.query("UPDATE employees SET manager_id = ? WHERE id = ?",
-            // 'id' correlates with the specific employee in the table, and then updates their role_id
-            [response.newId, response.employeeId],
-            err => {
-                if (err) throw err;
-                console.log("Manager ID has been updated!")
-                startApp();
-            })
-    })
-}
+        // 'id' correlates with the specific employee in the table, and then updates their role_id
+        [response.newId, response.employeeId],
+        err => {
+            if (err) throw err;
+            console.log("Manager ID has been updated!")
+            startApp();
+        });
+    });
+};
 
 function viewAllEmployees() {
     // Selects all rows up to FROM where employees is joined with roles (IF roles.id and employee.role_id match then grab all data from 'SELECT')
-    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department_name AS departments, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employees LEFT JOIN roles on roles.id = employees.role_id LEFT JOIN departments ON departments.id = roles.department_id LEFT JOIN employees manager ON manager.id = employees.manager_id;", (err, response) => {
-        console.table(response)
+    connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department_name AS departments, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employees LEFT JOIN roles on roles.id = employees.role_id LEFT JOIN departments ON departments.id = roles.department_id LEFT JOIN employees manager ON manager.id = employees.manager_id;", (err, res) => {
+        console.table(res);
         startApp();
-    })
-}
-
+    });
+};
 
 function viewEmployeeManager() {
     // If manager_id is null, then that means the employee is a manager
     connection.query("SELECT * FROM employees WHERE manager_id IS null", (err, res) => {
-        // console.log(res)
+        // console.log(res);
 
         const employeeManager = res.map(({ id, first_name, last_name }) => ({
             name: `${first_name} ${last_name}`,
             value: id
-        }))
+        }));
 
         inquirer.prompt([
             {
@@ -346,13 +345,13 @@ function viewEmployeeManager() {
         ]).then((answer) => {
             // Views employees where the manager_id matches with the user choice that is selected
             connection.query("SELECT * FROM employees WHERE manager_id = ?", answer.viewEmployeeManager, (err, res) => {
-                console.table(res)
-                console.log("You've successfully viewed employees by manager!")
+                console.table(res);
+                console.log("You've successfully viewed employees by manager!");
                 startApp();
-            })
-        })
-    })
-}
+            });
+        });
+    });
+};
 
 
 
