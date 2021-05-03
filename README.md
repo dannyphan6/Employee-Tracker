@@ -20,7 +20,7 @@ Below is an example of the application's appearance:
 Before running the application, the user must execute the command "npm install" to install all of the required dependencies and packages. You're now all set to run this application!
 
 ## Usage
-To execute this application, you will need to run the command "npm start" in the directory where "server.js" resides. You're now connected to the server and prompted with options on whether you want to add, remove, and view departments, roles, employees, and more. Select any option and you're on your way to managing the companies employees! 
+To execute this application, you will need to run the command "npm start" in the directory where "server.js" resides. You're now connected to the server and prompted with options on whether you want to add, remove, and view departments, roles, employees, and more. Select any option and you're on your way to managing the company's employees! 
 
 Below is an example of the application's functionality and the results:
 
