@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
-require('console.table');
+require("console.table");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -116,8 +116,8 @@ function removeDepartment() {
 
 function viewAllDepartments() {
     // Views departments from 'departments' table
-    connection.query("SELECT * FROM departments", (err, response) => {
-        console.table(response)
+    connection.query("SELECT * FROM departments", (err, res) => {
+        console.table(res)
         startApp();
     });
 };
@@ -203,8 +203,8 @@ function updateEmployeeRole() {
 
 function viewAllRoles() {
     // Views roles from 'roles' table
-    connection.query("SELECT * FROM roles", (err, response) => {
-        console.table(response)
+    connection.query("SELECT * FROM roles", (err, res) => {
+        console.table(res)
         startApp();
     });
 };
@@ -346,19 +346,8 @@ function viewEmployeeManager() {
             // Views employees where the manager_id matches with the user choice that is selected
             connection.query("SELECT * FROM employees WHERE manager_id = ?", answer.viewEmployeeManager, (err, res) => {
                 console.table(res);
-                console.log("You've successfully viewed employees by manager!");
                 startApp();
             });
         });
     });
 };
-
-
-
-
-
-
-
-
-
-
